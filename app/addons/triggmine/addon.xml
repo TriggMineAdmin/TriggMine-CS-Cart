@@ -1,0 +1,137 @@
+<?xml version="1.0"?>
+<addon scheme="3.0">
+    <id>triggmine</id>
+    <version>3.0.23.1</version>
+    <priority>9990</priority>
+    <position>100</position>
+    <status>active</status>
+    <default_language>en</default_language>
+    <auto_install>MULTIVENDOR,ULTIMATE</auto_install>
+    <name>TriggMine - Automated Email Campaign</name>
+    <description>ECOMMERCE EMAIL MARKETING AUTOMATION FOR YOUR IDEAL CUSTOMER EXPERIENCE</description>
+    <authors>
+        <author>
+            <name>TriggMine</name>
+            <email>support@triggmine.com</email>
+            <url>http://www.triggmine.com/</url>
+            <phone>+372-880-12-09</phone>
+        </author>
+    </authors>
+    <core_version>
+        <min>4.6.1</min>
+    </core_version>
+    <php_version>
+        <min>5.3.0</min>
+        <max>5.6.31</max>
+    </php_version>
+    <settings>
+        <sections>
+            <section id="general">
+                <translations>
+                    <item lang="en">TriggMine v3.0.23</item>
+                </translations>
+                <items>
+                    <item id="header_api">
+                        <type>header</type>
+                        <name>API Credentials</name>
+                    </item>
+                    <item id="enabled_api">
+                        <name>Enable TriggMine</name>
+                        <type>selectbox</type>
+                        <default_value>1</default_value>
+                        <variants>
+                            <item id="1">
+                                <name>On</name>
+                            </item>
+                            <item id="0">
+                                <name>Off</name>
+                            </item>
+                        </variants>
+                    </item>
+                    <item id="api_url">
+                        <name>API URL</name>
+                        <type>input</type>
+                        <default_value></default_value>
+                    </item>
+                    <item id="api_key">
+                        <name>API KEY</name>
+                        <type>input</type>
+                        <default_value></default_value>
+                    </item>
+                    <item id="header_order">
+                        <type>header</type>
+                        <name>Export orders history</name>
+                    </item>
+                    <item id="enabled_order">
+                        <name>Enable Order Export</name>
+                        <type>selectbox</type>
+                        <default_value>1</default_value>
+                        <variants>
+                            <item id="1">
+                                <name>On</name>
+                            </item>
+                            <item id="0">
+                                <name>Off</name>
+                            </item>
+                        </variants>
+                    </item>
+                    <item id="startdate_order">
+                        <name>Start Date</name>
+                        <type>input</type>
+                        <default_value></default_value>
+                    </item>
+                    <item id="enddate_order">
+                        <name>End Date</name>
+                        <type>input</type>
+                        <default_value></default_value>
+                    </item>
+                    <item id="header_customers">
+                        <type>header</type>
+                        <name>Export customers history</name>
+                    </item>
+                    <item id="enabled_customers">
+                        <name>Enable Customers Export</name>
+                        <type>selectbox</type>
+                        <default_value>1</default_value>
+                        <variants>
+                            <item id="1">
+                                <name>On</name>
+                            </item>
+                            <item id="0">
+                                <name>Off</name>
+                            </item>
+                        </variants>
+                    </item>
+                    <item id="startdate_customers">
+                        <name>Start Date</name>
+                        <type>input</type>
+                        <default_value></default_value>
+                    </item>
+                    <item id="enddate_customers">
+                        <name>End Date</name>
+                        <type>input</type>
+                        <default_value></default_value>
+                    </item>
+                    <item id="header_products">
+                        <type>header</type>
+                        <name>Export products data</name>
+                    </item>
+                    <item id="enabled_products">
+                        <name>Enable Product Export</name>
+                        <type>selectbox</type>
+                        <default_value>1</default_value>
+                        <variants>
+                            <item id="1">
+                                <name>On</name>
+                            </item>
+                            <item id="0">
+                                <name>Off</name>
+                            </item>
+                        </variants>
+                    </item>
+                </items>
+            </section>
+        </sections>
+    </settings>
+
+</addon>

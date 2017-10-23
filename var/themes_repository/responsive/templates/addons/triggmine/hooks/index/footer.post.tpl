@@ -1,0 +1,1 @@
+{$triggmine_scripts nofilter}

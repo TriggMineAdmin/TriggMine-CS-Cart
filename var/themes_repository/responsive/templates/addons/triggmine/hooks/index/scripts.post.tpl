@@ -1,0 +1,1 @@
+{script src="js/addons/triggmine/triggmine.js"}

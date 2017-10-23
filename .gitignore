@@ -1,0 +1,37 @@
+# Ignore everything
+/*
+
+# Must Have
+!/.gitignore
+!/README.MD
+
+# CS-Cart module file
+!/app
+/app/*
+!/app/addons
+/app/addons/*
+!/app/addons/triggmine
+
+# CS-Cart User Interface
+!/var
+/var/*
+!/var/themes_repository
+/var/themes_repository/*
+!/var/themes_repository/responsive
+/var/themes_repository/responsive/*
+!/var/themes_repository/responsive/templates
+/var/themes_repository/responsive/templates/*
+!/var/themes_repository/responsive/templates/addons
+/var/themes_repository/responsive/templates/addons/*
+!/var/themes_repository/responsive/templates/addons/triggmine
+/var/themes_repository/responsive/templates/addons/triggmine/*
+!/var/themes_repository/responsive/templates/addons/triggmine/hooks
+/var/themes_repository/responsive/templates/addons/triggmine/hooks/*
+!/var/themes_repository/responsive/templates/addons/triggmine/hooks/index
+
+# CS-Cart web accessible file
+!/js
+/js/*
+!/js/addons
+/js/addons/*
+!/js/addons/triggmine
