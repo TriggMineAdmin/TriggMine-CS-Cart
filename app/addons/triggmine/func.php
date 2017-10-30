@@ -12,7 +12,7 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
  *
  * @return string
  */
-function triggmine_on_page_loaded()
+function fn_triggmine_on_page_loaded()
 {
     $integrator = Triggmine_Integrator_CS_Cart::singleton();
     $integrator->onPageLoaded();
