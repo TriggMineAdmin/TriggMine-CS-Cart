@@ -142,3 +142,63 @@ function fn_triggmine_place_order($order_id, $action, $order_status, $cart, $aut
         return false;
     }
 }
+/**
+ * Hook is executed before changing add-on status (i.e. before add-on enabling or disabling).
+ * event - update_addon_status_pre
+ *
+ * @return bool
+ */
+function fn_triggmine_update_addon_status_pre($addon, $status, $show_notification, $on_install, $allow_unmanaged, $old_status, $scheme)
+{
+    $integrator = Triggmine_Integrator_CS_Cart::singleton();
+    
+    // $integrator->localResponseLog(array($addon, $status, $show_notification, $on_install, $allow_unmanaged, $old_status, $scheme));
+    
+    return false;
+}
+
+function fn_triggmine_url_post($_url, $area, $url, $protocol) {
+
+    if(isset($_POST['addon']) && $_POST['addon'] === "triggmine") {
+        
+        $post = array_values($_POST['addon_data']['options']);
+        
+        $settings = array(
+                'StatusEnableTriggmine'         => $post[0],
+                'ApiUrl'                        => $post[1],
+                'ApiKey'                        => $post[2],
+                'StatusEnableOrderExport'       => $post[3],
+                'OrderExportDateFrom'           => $post[4],
+                'OrderExportDateTo'             => $post[5],
+                'StatusEnableCustomerExport'    => $post[6],
+                'CustomerExportDateFrom'        => $post[7],
+                'CustomerExportDateTo'          => $post[8]
+            );
+        
+        $integrator = Triggmine_Integrator_CS_Cart::singleton();
+
+        $data = $integrator->SoftChek($post[0]);
+        // $integrator->localResponseLog($data);
+        $res = $integrator->onDiagnosticInformationUpdated($data, $post[1], $post[2]);
+        // $integrator->localResponseLog($res);
+        
+        return true;
+    }
+    else {
+        
+        return false;  
+    }
+    
+}
+
+function fn_triggmine_get_product_details_layout_post($result, $product_id) {
+    
+    // $product_data = fn_get_product_data($product_id, $_SESSION['auth']);
+    
+    $integrator = Triggmine_Integrator_CS_Cart::singleton();
+    
+    $data = $integrator->PageInit($product_id);
+    // $integrator->localResponseLog($data);
+    $res = $integrator->onPageInit($data);
+    // $integrator->localResponseLog($res);
+}

@@ -1,7 +1,7 @@
 <?php
 	final class TriggMine_ApiClient
 	{
-		const VERSION = '3.0.23.1';
+		const VERSION = '3.0.23.3';
 		/**
 		 * Keys to be used in code.
 		 */
@@ -168,7 +168,7 @@
 					
 					$result = false;
 					
-					$this->_integrator->localResponseLog($request);
+					// $this->_integrator->localResponseLog($request);
 					
 					if (TriggMine_Helper::isCurlEnabled()) {
 						$result = $this->_curlRequest($url, $request);
@@ -180,7 +180,7 @@
 					
 					if($this->_integrator->getLogInFile())
 					{
-						$this->_integrator->localResponseLog($request, $response);
+						// $this->_integrator->localResponseLog($request, $response);
 					}
 					$this->_processIncomingData($request, $response);
 					

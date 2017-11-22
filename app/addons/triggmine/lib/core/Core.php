@@ -8,7 +8,7 @@ use Tygh\Database;
 
 	abstract class TriggMine_Core
 	{
-		const VERSION = '3.0.23.1';
+		const VERSION = '3.0.23.3';
 		/**
 		 * Keys to be used in code.
 		 */
@@ -77,8 +77,9 @@ use Tygh\Database;
 		 * @var bool
 		 */
 		protected $_logInFile = true;
-		public function __construct()
-		{
+		
+		public function __construct() {
+			
 			if ($this->_getGetValue(self::KEY_TRIGGMINE_VERSION) !== null) {
 				echo $this->getVersion();
 				exit;
@@ -87,15 +88,18 @@ use Tygh\Database;
 			$this->_token = $this->_getSettingValue(self::SETTING_TOKEN);
 			$this->_restApi = $this->_getSettingValue(self::SETTING_REST_API);
 			$this->_isAsync = ($this->_getGetValue(self::KEY_TRIGGMINE_ASYNC) !== null);
+			
 			if ($this->_getGetValue(self::KEY_TRIGGMINE_EXPORT) !== null) {
 				echo $this->getOrders();
 				exit;
 			}
 			// Initializing API client
 			$this->_api = new TriggMine_ApiClient($this);
+			
 			if ($this->_isFictiveRequest()) {
 				$this->_isOn = false;
 			}
+			
 			$this->_processAsyncRequest();
 		}
 		/**
@@ -117,9 +121,9 @@ use Tygh\Database;
 		 */
 		final public function getVersion()
 		{
-			return 'Agent: ' . $this->getAgent() . ' ' . $this->getAgentVersion() . '<br/>'
-			. 'Core version: ' . self::VERSION . '<br/>'
-			. 'Integrator version: ' . constant(get_class($this) . '::VERSION') . '<br/>'
+			return 'CMS: ' . $this->getAgent() . ' ' . $this->getAgentVersion() . ' '
+			. 'Core version: ' . self::VERSION . ' '
+			. 'Integrator version: ' . constant(get_class($this) . '::VERSION') . ' '
 			. 'ApiClient version: ' . TriggMine_ApiClient::VERSION;
 		}
 		/**
@@ -202,6 +206,55 @@ use Tygh\Database;
 			}
 			return $result;
 		}
+		
+	    public function apiClient($data, $method, $url = null, $token = null)
+	    {
+	        
+	        $url   = $url ? $url : $this->_restApi;
+	        $token = $token ? $token : $this->_token;
+	
+	        if ($url == "")
+	        {
+	            $res = array(
+	                "status"    => 0,
+	                "body"      => ""
+	            );
+	        }
+	        else
+	        {
+	            $target = "https://" . $url . "/" . $method;
+	    
+	            $data_string = json_encode($data);
+	            
+	            $ch = curl_init();
+	    
+	            curl_setopt($ch, CURLOPT_URL, $target);
+	            // curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+	            curl_setopt($ch, CURLOPT_POST, true);
+	            curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);           
+	            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+	            curl_setopt($ch, CURLOPT_HTTPHEADER, array(                  
+	                'Content-Type: application/json',
+	                'ApiKey: ' . $token,
+	                'Content-Length: ' . strlen($data_string))
+	            );
+	            
+	            $res_json = curl_exec ($ch);
+	            
+	            $res = array(
+	                "status"    => curl_getinfo ($ch, CURLINFO_HTTP_CODE),
+	                "body"      => $res_json ? json_decode ($res_json, true) : curl_error ($ch)
+	            );
+	            
+	            curl_close ($ch);
+	        }
+	        
+	        // $this->_integrator->localResponseLog($res);
+	        return $res;
+	    }
+	    
+	    
 		/**
 		 * Adds &lt;script&gt; tag into the HTML.
 		 * Modifies the URL depending on whether it is a plugin file or not.

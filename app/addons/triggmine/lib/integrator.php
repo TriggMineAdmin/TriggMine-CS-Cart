@@ -6,7 +6,7 @@ use Tygh\Database;
 
 class Triggmine_Integrator_CS_Cart extends TriggMine_Core
 {
-	const VERSION = '3.0.23.1';
+	const VERSION = '3.0.23.3';
 	private $_scriptFiles = array();
 	private $_scripts = array();
 	
@@ -266,4 +266,85 @@ class Triggmine_Integrator_CS_Cart extends TriggMine_Core
 	{
 		$this->purchaseCart($data);
 	}
+	
+	
+	public function SoftChek($status = 0) {
+
+        $res = array(
+            'dateCreated'       => date('Y-m-d\TH:i:s'),
+            'diagnosticType'    => 'InstallPlugin',
+            'description'       => $this->getVersion(),
+            'status'            => $status
+        );
+        
+		return $res;
+	}
+	
+    public function onDiagnosticInformationUpdated($data, $url, $token)
+    {
+        return $this->apiClient($data, 'control/api/plugin/onDiagnosticInformationUpdated', $url, $token);
+    }
+    
+    public function PageInit($product_id)
+    {
+    	$item		= fn_get_product_data($product_id, $_SESSION['auth']);
+    	$categories	= $item['category_ids'];
+        
+        $product = array (
+            "product_id"            => $item['product_id'],
+            "product_name"          => $item['product'],
+            "product_desc"          => $item['full_description'],
+            "product_sku"           => $item['product_code'],
+            "product_image"         => $item['main_pair']['detailed']['image_path'],
+            "product_url"           => (isset($_SERVER['HTTPS']) ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+            "product_qty"           => 1,
+            "product_price"         => $item['base_price'],
+            "product_total_val"     => $item['base_price'],
+            "product_categories"    => array()
+        );
+        
+        $user_id = $_SESSION['auth']['user_id'];
+        
+        if(!empty($user_id)) {
+        	
+        	$user_data = fn_get_user_info($user_id, false);
+        	
+	        $customer = array(
+	            "device_id"             => "",
+	            "device_id_1"           => "",
+	            "customer_id"           => $user_data['user_id'],
+	            "customer_first_name"   => $user_data['firstname'],
+	            "customer_last_name"    => $user_data['lastname'],
+	            "customer_email"        => $user_data['email'],
+	            "customer_date_created" => ""
+	        );      	
+        }
+        else { 
+        	
+	        $customer = array(
+	            "device_id"             => "",
+	            "device_id_1"           => "",
+	            "customer_id"           => "",
+	            "customer_first_name"   => "",
+	            "customer_last_name"    => "",
+	            "customer_email"        => "",
+	            "customer_date_created" => ""
+	        );
+        }
+        
+        $products  = array($product);
+    
+        $data = array(
+          "user_agent"      => $_SERVER['HTTP_USER_AGENT'] ?: null,
+          "customer"        => $customer,
+          "products"        => $products
+        );
+		
+		return $data;
+    }
+    
+    public function onPageInit($data)
+    {
+        return $this->apiClient($data, 'api/events/navigation');
+    }
 }
