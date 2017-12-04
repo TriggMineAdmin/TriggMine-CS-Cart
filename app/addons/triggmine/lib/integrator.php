@@ -29,6 +29,14 @@ class Triggmine_Integrator_CS_Cart extends TriggMine_Core
 		parent::__construct();
 	}
 	
+	public function _deviceId() {
+		return isset($_COOKIE['device_id']) && $_COOKIE['device_id'] ? $_COOKIE['device_id'] : "";
+	}
+	
+	public function _deviceId1() {
+		return isset($_COOKIE['device_id_1']) && $_COOKIE['device_id_1'] ? $_COOKIE['device_id_1'] : "";
+	}
+	
 	/**
 	 * Returns a name of your CMS / eCommerce platform.
 	 *
@@ -267,8 +275,15 @@ class Triggmine_Integrator_CS_Cart extends TriggMine_Core
 		$this->purchaseCart($data);
 	}
 	
+    public function isBot()
+	{
+	   preg_match('/bot|curl|spider|google|baidu|facebook|yandex|bing|aol|duckduckgo|teoma|yahoo|twitter^$/i', $_SERVER['HTTP_USER_AGENT'], $matches);
 	
-	public function SoftChek($status = 0) {
+	   return (empty($matches)) ? false : true;
+	}
+	
+	public function SoftChek($status = 0)
+	{
 
         $res = array(
             'dateCreated'       => date('Y-m-d\TH:i:s'),
@@ -289,7 +304,9 @@ class Triggmine_Integrator_CS_Cart extends TriggMine_Core
     {
     	$item		= fn_get_product_data($product_id, $_SESSION['auth']);
     	$categories	= $item['category_ids'];
-        
+    	$deviceId	= $this->_deviceId();
+    	$deviceId1	= $this->_deviceId1();
+    	
         $product = array (
             "product_id"            => $item['product_id'],
             "product_name"          => $item['product'],
@@ -310,8 +327,8 @@ class Triggmine_Integrator_CS_Cart extends TriggMine_Core
         	$user_data = fn_get_user_info($user_id, false);
         	
 	        $customer = array(
-	            "device_id"             => "",
-	            "device_id_1"           => "",
+	            "device_id"             => $deviceId,
+	            "device_id_1"           => $deviceId1,
 	            "customer_id"           => $user_data['user_id'],
 	            "customer_first_name"   => $user_data['firstname'],
 	            "customer_last_name"    => $user_data['lastname'],
@@ -322,8 +339,8 @@ class Triggmine_Integrator_CS_Cart extends TriggMine_Core
         else { 
         	
 	        $customer = array(
-	            "device_id"             => "",
-	            "device_id_1"           => "",
+	            "device_id"             => $deviceId,
+	            "device_id_1"           => $deviceId1,
 	            "customer_id"           => "",
 	            "customer_first_name"   => "",
 	            "customer_last_name"    => "",
@@ -346,5 +363,34 @@ class Triggmine_Integrator_CS_Cart extends TriggMine_Core
     public function onPageInit($data)
     {
         return $this->apiClient($data, 'api/events/navigation');
+    }
+    
+    public function getCustomerLoginData($user_id)
+    {
+    	if($user_id) {
+    		
+	    	$user_data	= fn_get_user_info($user_id, false);
+	    	$deviceId	= $this->_deviceId();
+	    	$deviceId1	= $this->_deviceId1();
+	    	
+	    	// $this->localResponseLog($user_data);
+    	
+	        $customer = array(
+	            "device_id"             => $deviceId,
+	            "device_id_1"           => $deviceId1,
+	            "customer_id"           => $user_data['user_id'],
+	            "customer_first_name"   => $user_data['firstname'],
+	            "customer_last_name"    => $user_data['lastname'],
+	            "customer_email"        => $user_data['email'],
+	            "customer_date_created" => ""
+	        );
+	        
+	        return $customer;
+    	}
+    }
+    
+    public function sendLoginData($data)
+    {
+        return $this->apiClient($data, 'api/events/prospect/login');
     }
 }

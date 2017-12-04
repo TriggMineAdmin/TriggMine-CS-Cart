@@ -1,3 +1,30 @@
+window.onload = function() {
+	if (typeof ClientJS != "undefined") {
+	    var b = new ClientJS;
+		var c = b.getFingerprint();
+		var d = Cookies.set('device_id_1', c, {
+		    path: '/', expires: 365
+		});
+		console.log(d);
+	} 
+	else {
+		console.log("ClientJS not loaded..");
+	}
+
+	if (typeof Fingerprint2 != "undefined") {
+		var f = new Fingerprint2({swfPath: '/assets/FontList.swf', excludeUserAgent: !0, excludeLanguage: !0});
+		f.get(function(g) {
+			var j = Cookies.set('device_id', g, {
+		        path: '/', expires: 365
+		    });
+		    console.log(j);
+		});
+	} 
+	else {
+		console.log("Fingerprint not loaded..");
+	}
+};
+
 var TriggMineApi = {
 	version: '1.0.5',
 	pingInterval: 30000, // 30 seconds

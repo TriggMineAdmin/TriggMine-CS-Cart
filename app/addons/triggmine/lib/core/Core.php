@@ -87,7 +87,6 @@ use Tygh\Database;
 			$this->_isOn = $this->_getSettingValue(self::SETTING_IS_ON);
 			$this->_token = $this->_getSettingValue(self::SETTING_TOKEN);
 			$this->_restApi = $this->_getSettingValue(self::SETTING_REST_API);
-			$this->_isAsync = ($this->_getGetValue(self::KEY_TRIGGMINE_ASYNC) !== null);
 			
 			if ($this->_getGetValue(self::KEY_TRIGGMINE_EXPORT) !== null) {
 				echo $this->getOrders();
@@ -323,7 +322,7 @@ use Tygh\Database;
 		 */
 		protected function _getCookieValue($name)
 		{
-			return isset($_COOKIE[self::KEY_TRIGGMINE][$name]) ? $_COOKIE[self::KEY_TRIGGMINE][$name] : null;
+			return isset($_COOKIE[self::KEY_TRIGGMINE][$name]) ? $_COOKIE[self::KEY_TRIGGMINE][$name] : "";
 		}
 		/**
 		 * Encapsulates the work with cookies.
