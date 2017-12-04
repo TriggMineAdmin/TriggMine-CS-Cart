@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <addon scheme="3.0">
     <id>triggmine</id>
-    <version>3.0.23.3</version>
+    <version>3.0.23.4</version>
     <priority>9990</priority>
     <position>100</position>
     <status>active</status>

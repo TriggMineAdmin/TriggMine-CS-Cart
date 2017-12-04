@@ -6,7 +6,7 @@ use Tygh\Database;
 
 class Triggmine_Integrator_CS_Cart extends TriggMine_Core
 {
-	const VERSION = '3.0.23.3';
+	const VERSION = '3.0.23.4';
 	private $_scriptFiles = array();
 	private $_scripts = array();
 	

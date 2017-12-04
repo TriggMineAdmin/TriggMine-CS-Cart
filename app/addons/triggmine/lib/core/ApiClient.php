@@ -1,7 +1,7 @@
 <?php
 	final class TriggMine_ApiClient
 	{
-		const VERSION = '3.0.23.3';
+		const VERSION = '3.0.23.4';
 		/**
 		 * Keys to be used in code.
 		 */
