@@ -1,9 +1,0 @@
------Start log at 04-12-2017 16:31:23------
-INFO: Request:
-null
------Start log at 04-12-2017 16:31:29------
-INFO: Request:
-{"device_id":"77f0cd717eaf703a56cca9e02940c820","device_id_1":"3903331144","customer_id":"1","customer_first_name":"\u0410\u0434\u043c\u0438\u043d\u0438\u0441\u0442\u0440\u0430\u0442\u043e\u0440","customer_last_name":"\u0413\u043b\u0430\u0432\u043d\u044b\u0439","customer_email":"p.peshkov@triggmine.com","customer_date_created":""}
------Start log at 04-12-2017 16:31:29------
-INFO: Request:
-{"status":200,"body":{"status":"success"}}
