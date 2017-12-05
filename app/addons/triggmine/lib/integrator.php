@@ -393,4 +393,14 @@ class Triggmine_Integrator_CS_Cart extends TriggMine_Core
     {
         return $this->apiClient($data, 'api/events/prospect/login');
     }
+    
+    public function sendLogoutData($data)
+    {
+        return $this->apiClient($data, 'api/events/prospect/logout');
+    }
+
+    public function sendRegisterData($data)
+    {
+        return $this->apiClient($data, 'api/events/prospect/registration');
+    }
 }

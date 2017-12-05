@@ -205,14 +205,61 @@ function fn_triggmine_get_product_details_layout_post($result, $product_id)
     // $integrator->localResponseLog($res);
 }
 
+/**
+ * Modifies the result after login user
+ * event - login_user_post
+ *
+ * @return bool
+ */
 function fn_triggmine_login_user_post($user_id, $cu_id, $udata, $auth, $condition, $result)
 {
-    $integrator = Triggmine_Integrator_CS_Cart::singleton();
-    
-    $data = $integrator->getCustomerLoginData($user_id);
-    // $integrator->localResponseLog($data);
-    if($data) {
+    if($user_id && $auth['last_login']) { // Registration New User
+        
+        $integrator = Triggmine_Integrator_CS_Cart::singleton();
+        
+        $data = $integrator->getCustomerLoginData($user_id);
+        // $integrator->localResponseLog($data);
+        $res = $integrator->sendRegisterData($data);
+        // $integrator->localResponseLog($res);
+        
+        return true;
+    }
+    elseif($user_id) { // Sign In User
+ 
+        $integrator = Triggmine_Integrator_CS_Cart::singleton();
+        
+        $data = $integrator->getCustomerLoginData($user_id);
+        // $integrator->localResponseLog($data);
         $res = $integrator->sendLoginData($data);
         // $integrator->localResponseLog($res);
+        
+        return true;       
+    }
+    else {
+        return false;
+    }
+}
+
+/**
+ * Allows to perform any actions after user logout.
+ * event - user_logout_after
+ *
+ * @return bool
+ */
+function fn_triggmine_user_logout_after($auth)
+{   
+    if($auth['user_id']) {
+        
+        $integrator = Triggmine_Integrator_CS_Cart::singleton();
+        
+        $data = $integrator->getCustomerLoginData($auth['user_id']);
+        // $integrator->localResponseLog($data);
+        $res = $integrator->sendLogoutData($data);
+        // $integrator->localResponseLog($res);
+        
+        return true;
+    }
+    else {
+        return false;
     }
 }
