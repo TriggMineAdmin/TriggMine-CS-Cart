@@ -77,6 +77,12 @@ function fn_triggmine_on_page_loaded()
  */
 function fn_triggmine_save_cart($cart, $user_id, $type)
 {
+    // $integrator = Triggmine_Integrator_CS_Cart::singleton();
+    // $integrator->localResponseLog($cart);
+    // $integrator->localResponseLog($user_id);
+    // $integrator->localResponseLog($type);
+    
+        
     if (isset($cart['products'])) {
         $products = $cart['products'];
         $items = array();
@@ -116,6 +122,14 @@ function fn_triggmine_save_cart($cart, $user_id, $type)
  */
 function fn_triggmine_place_order($order_id, $action, $order_status, $cart, $auth)
 {
+    
+    // $integrator = Triggmine_Integrator_CS_Cart::singleton();
+    // $integrator->localResponseLog($order_id);
+    // $integrator->localResponseLog($action);
+    // $integrator->localResponseLog($order_status);
+    // $integrator->localResponseLog($cart);
+    // $integrator->localResponseLog($auth);
+    
     if($order_id) {
         $userInfo = array();
         $user_id = $auth['user_id'];
@@ -213,24 +227,25 @@ function fn_triggmine_get_product_details_layout_post($result, $product_id)
  */
 function fn_triggmine_login_user_post($user_id, $cu_id, $udata, $auth, $condition, $result)
 {
-    if($user_id && $auth['last_login']) { // Registration New User
+
+    if($user_id && $auth['last_login']) { // Sign In User 
         
-        $integrator = Triggmine_Integrator_CS_Cart::singleton();
-        
-        $data = $integrator->getCustomerLoginData($user_id);
-        // $integrator->localResponseLog($data);
-        $res = $integrator->sendRegisterData($data);
-        // $integrator->localResponseLog($res);
-        
-        return true;
-    }
-    elseif($user_id) { // Sign In User
- 
         $integrator = Triggmine_Integrator_CS_Cart::singleton();
         
         $data = $integrator->getCustomerLoginData($user_id);
         // $integrator->localResponseLog($data);
         $res = $integrator->sendLoginData($data);
+        // $integrator->localResponseLog($res);
+        
+        return true;
+    }
+    elseif($user_id) { // Registration New User
+ 
+        $integrator = Triggmine_Integrator_CS_Cart::singleton();
+        
+        $data = $integrator->getCustomerLoginData($user_id);
+        // $integrator->localResponseLog($data);
+        $res = $integrator->sendRegisterData($data);
         // $integrator->localResponseLog($res);
         
         return true;       

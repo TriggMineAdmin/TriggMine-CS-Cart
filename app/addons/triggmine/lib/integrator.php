@@ -302,6 +302,8 @@ class Triggmine_Integrator_CS_Cart extends TriggMine_Core
     
     public function PageInit($product_id)
     {
+    	
+    	
     	$item		= fn_get_product_data($product_id, $_SESSION['auth']);
     	$categories	= $item['category_ids'];
     	$deviceId	= $this->_deviceId();
