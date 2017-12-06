@@ -8,7 +8,7 @@ use Tygh\Database;
 
 	abstract class TriggMine_Core
 	{
-		const VERSION = '3.0.23.4';
+		const VERSION = '3.0.23.5';
 		/**
 		 * Keys to be used in code.
 		 */
