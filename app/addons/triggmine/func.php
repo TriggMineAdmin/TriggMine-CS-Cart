@@ -125,10 +125,13 @@ function fn_triggmine_save_cart_content_post($cart, $user_id, $type, $user_type)
 {
     $integrator = Triggmine_Integrator_CS_Cart::singleton();
     // $integrator->localResponseLog($cart);
+    // $integrator->localResponseLog($type);
     
-    $data = $integrator->getCartData($cart);
-    $res = $integrator->sendCart($data);
-    $integrator->localResponseLog($data, $res);
+    if($type != "W") {
+        $data = $integrator->getCartData($cart);
+        $res = $integrator->sendCart($data);
+        // $integrator->localResponseLog($data, $res);
+    }
 }
 
 /**
