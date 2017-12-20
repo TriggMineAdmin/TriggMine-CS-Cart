@@ -5,7 +5,7 @@ if (!defined('BOOTSTRAP')) { die('Access denied'); }
 fn_register_hooks(
     'login_user_post',
     'user_logout_after',
-    'save_cart',
+    'save_cart_content_post',
     'place_order',
     'update_addon_status_pre',
     'url_post',

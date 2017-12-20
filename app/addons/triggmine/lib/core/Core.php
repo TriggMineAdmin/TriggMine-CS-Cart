@@ -8,7 +8,7 @@ use Tygh\Database;
 
 	abstract class TriggMine_Core
 	{
-		const VERSION = '3.0.23.5';
+		const VERSION = '3.0.23.6';
 		/**
 		 * Keys to be used in code.
 		 */
@@ -442,8 +442,14 @@ use Tygh\Database;
 		}
 		public function localResponseLog($request, $response = null, $fileName = '/logs/log.txt')
 		{
+		    /*$e = new Exception();
+		    $trace = $e->getTrace();
+		    //position 0 would be the line that called this function so we ignore it
+		    $last_call = json_encode($trace[1]);*/			
+		
 			$f = fopen(dirname(__FILE__) . $fileName, 'a+');
 			fputs($f, '-----Start log at ' . date('d-m-Y H:i:s') . '------' . "\n");
+			// fputs($f, 'Backtrace: ' . $last_call . "\n");
 			fputs($f, 'INFO: Request:' . "\n");
 			fputs($f, json_encode($request) . "\n");
 			

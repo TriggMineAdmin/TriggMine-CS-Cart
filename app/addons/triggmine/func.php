@@ -75,15 +75,15 @@ function fn_triggmine_on_page_loaded()
  *
  * @return bool
  */
-function fn_triggmine_save_cart($cart, $user_id, $type)
-{
+// function fn_triggmine_save_cart($cart, $user_id, $type)
+// {
     // $integrator = Triggmine_Integrator_CS_Cart::singleton();
     // $integrator->localResponseLog($cart);
     // $integrator->localResponseLog($user_id);
     // $integrator->localResponseLog($type);
     
         
-    if (isset($cart['products'])) {
+/*    if (isset($cart['products'])) {
         $products = $cart['products'];
         $items = array();
         foreach ($products as $product) {
@@ -101,10 +101,10 @@ function fn_triggmine_save_cart($cart, $user_id, $type)
                 $ImageUrl = $ImageInfo['detailed']['http_image_path'];
                 $item['ImageUrl'] = $ImageUrl;
             }
-            //TODO add ThumbnailUrl
-            /*if (isset($item['ThumbnailUrl'])) {
-                $ImageThumbnailUrl = path to ThumbnailUrl;
-            }*/
+            // TODO add ThumbnailUrl
+            // if (isset($item['ThumbnailUrl'])) {
+            //     $ImageThumbnailUrl = path to ThumbnailUrl;
+            // }
             $items['Items'][] = $item;
         }
         $integrator = Triggmine_Integrator_CS_Cart::singleton();
@@ -112,8 +112,25 @@ function fn_triggmine_save_cart($cart, $user_id, $type)
         return true;
     } else {
         return false;
-    }
+    }*/
+// }
+
+/**
+ * Prepare and sends products data to update buyer info.
+ * event - save_cart
+ *
+ * @return bool
+ */
+function fn_triggmine_save_cart_content_post($cart, $user_id, $type, $user_type)
+{
+    $integrator = Triggmine_Integrator_CS_Cart::singleton();
+    // $integrator->localResponseLog($cart);
+    
+    $data = $integrator->getCartData($cart);
+    $res = $integrator->sendCart($data);
+    $integrator->localResponseLog($data, $res);
 }
+
 /**
  * Prepare and sends user data if user placed order.
  * event - place_order
@@ -123,14 +140,20 @@ function fn_triggmine_save_cart($cart, $user_id, $type)
 function fn_triggmine_place_order($order_id, $action, $order_status, $cart, $auth)
 {
     
-    // $integrator = Triggmine_Integrator_CS_Cart::singleton();
+    $integrator = Triggmine_Integrator_CS_Cart::singleton();
     // $integrator->localResponseLog($order_id);
     // $integrator->localResponseLog($action);
     // $integrator->localResponseLog($order_status);
     // $integrator->localResponseLog($cart);
     // $integrator->localResponseLog($auth);
+
+    $integrator = Triggmine_Integrator_CS_Cart::singleton();
     
-    if($order_id) {
+    $data = $integrator->getOrderData($order_id, $order_status, $cart);
+    $res = $integrator->onConvertCartToOrder($data);
+    // $integrator->localResponseLog($data, $res);  
+    
+/*    if($order_id) {
         $userInfo = array();
         $user_id = $auth['user_id'];
         $u_data = fn_get_user_info($user_id, false);
@@ -154,7 +177,7 @@ function fn_triggmine_place_order($order_id, $action, $order_status, $cart, $aut
         return true;
     } else {
         return false;
-    }
+    }*/
 }
 /**
  * Hook is executed before changing add-on status (i.e. before add-on enabling or disabling).
@@ -193,9 +216,8 @@ function fn_triggmine_url_post($_url, $area, $url, $protocol)
         $integrator = Triggmine_Integrator_CS_Cart::singleton();
 
         $data = $integrator->SoftChek($post[0]);
-        // $integrator->localResponseLog($data);
         $res = $integrator->onDiagnosticInformationUpdated($data, $post[1], $post[2]);
-        // $integrator->localResponseLog($res);
+        // $integrator->localResponseLog($data, $res);
         
         return true;
     }
@@ -212,11 +234,10 @@ function fn_triggmine_get_product_details_layout_post($result, $product_id)
     // $product_data = fn_get_product_data($product_id, $_SESSION['auth']);
     
     $integrator = Triggmine_Integrator_CS_Cart::singleton();
-
+    
     $data = $integrator->PageInit($product_id);
-    // $integrator->localResponseLog($data);
     $res = $integrator->onPageInit($data);
-    // $integrator->localResponseLog($res);
+    // $integrator->localResponseLog($data, $res);
 }
 
 /**
@@ -233,9 +254,8 @@ function fn_triggmine_login_user_post($user_id, $cu_id, $udata, $auth, $conditio
         $integrator = Triggmine_Integrator_CS_Cart::singleton();
         
         $data = $integrator->getCustomerLoginData($user_id);
-        // $integrator->localResponseLog($data);
         $res = $integrator->sendLoginData($data);
-        // $integrator->localResponseLog($res);
+        // $integrator->localResponseLog($data, $res);
         
         return true;
     }
@@ -244,9 +264,8 @@ function fn_triggmine_login_user_post($user_id, $cu_id, $udata, $auth, $conditio
         $integrator = Triggmine_Integrator_CS_Cart::singleton();
         
         $data = $integrator->getCustomerLoginData($user_id);
-        // $integrator->localResponseLog($data);
         $res = $integrator->sendRegisterData($data);
-        // $integrator->localResponseLog($res);
+        // $integrator->localResponseLog($data, $res);
         
         return true;       
     }
@@ -268,9 +287,8 @@ function fn_triggmine_user_logout_after($auth)
         $integrator = Triggmine_Integrator_CS_Cart::singleton();
         
         $data = $integrator->getCustomerLoginData($auth['user_id']);
-        // $integrator->localResponseLog($data);
         $res = $integrator->sendLogoutData($data);
-        // $integrator->localResponseLog($res);
+        // $integrator->localResponseLog($data, $res);
         
         return true;
     }

@@ -6,7 +6,7 @@ use Tygh\Database;
 
 class Triggmine_Integrator_CS_Cart extends TriggMine_Core
 {
-	const VERSION = '3.0.23.5';
+	const VERSION = '3.0.23.6';
 	private $_scriptFiles = array();
 	private $_scripts = array();
 	
@@ -300,34 +300,15 @@ class Triggmine_Integrator_CS_Cart extends TriggMine_Core
         return $this->apiClient($data, 'control/api/plugin/onDiagnosticInformationUpdated', $url, $token);
     }
     
-    public function PageInit($product_id)
+    public function getCustomer($user_id)
     {
-    	
-    	
-    	$item		= fn_get_product_data($product_id, $_SESSION['auth']);
-    	$categories	= $item['category_ids'];
-    	$deviceId	= $this->_deviceId();
+		$deviceId	= $this->_deviceId();
     	$deviceId1	= $this->_deviceId1();
     	
-        $product = array (
-            "product_id"            => $item['product_id'],
-            "product_name"          => $item['product'],
-            "product_desc"          => $item['full_description'],
-            "product_sku"           => $item['product_code'],
-            "product_image"         => $item['main_pair']['detailed']['image_path'],
-            "product_url"           => (isset($_SERVER['HTTPS']) ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
-            "product_qty"           => 1,
-            "product_price"         => $item['base_price'],
-            "product_total_val"     => $item['base_price'],
-            "product_categories"    => array()
-        );
-        
-        $user_id = $_SESSION['auth']['user_id'];
-        
         if(!empty($user_id)) {
         	
         	$user_data = fn_get_user_info($user_id, false);
-        	
+
 	        $customer = array(
 	            "device_id"             => $deviceId,
 	            "device_id_1"           => $deviceId1,
@@ -338,7 +319,7 @@ class Triggmine_Integrator_CS_Cart extends TriggMine_Core
 	            "customer_date_created" => ""
 	        );      	
         }
-        else { 
+        elseif(strlen($deviceId) > 0 || strlen($deviceId1) > 0) { 
         	
 	        $customer = array(
 	            "device_id"             => $deviceId,
@@ -350,21 +331,150 @@ class Triggmine_Integrator_CS_Cart extends TriggMine_Core
 	            "customer_date_created" => ""
 	        );
         }
+        else {
+        	
+        	return false;
+        }
         
-        $products  = array($product);
+        return $customer;
+    }
     
-        $data = array(
-          "user_agent"      => $_SERVER['HTTP_USER_AGENT'] ?: null,
-          "customer"        => $customer,
-          "products"        => $products
-        );
-		
-		return $data;
+    public function PageInit($product_id)
+    {
+    	$user_id	= $_SESSION['auth']['user_id'];
+    	$customer	= $this->getCustomer($user_id);
+    	
+    	if ($product_id && !$this->isBot() && $customer) {
+    	
+	    	$item		= fn_get_product_data($product_id, $_SESSION['auth']);
+	    	$categories	= $item['category_ids'];
+
+	        $product = array (
+	            "product_id"            => $item['product_id'],
+	            "product_name"          => $item['product'],
+	            "product_desc"          => $item['full_description'],
+	            "product_sku"           => $item['product_code'],
+	            "product_image"         => $item['main_pair']['detailed']['image_path'],
+	            "product_url"           => (isset($_SERVER['HTTPS']) ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+	            "product_qty"           => 1,
+	            "product_price"         => $item['base_price'],
+	            "product_total_val"     => $item['base_price'],
+	            "product_categories"    => array()
+	        );
+	        
+	        $products  = array($product);
+	    
+	        $data = array(
+	          "user_agent"      => $_SERVER['HTTP_USER_AGENT'] ?: null,
+	          "customer"        => $customer,
+	          "products"        => $products
+	        );
+			
+			return $data;
+    	}
+    	else {
+    		
+    		return false;
+    	}
     }
     
     public function onPageInit($data)
     {
-        return $this->apiClient($data, 'api/events/navigation');
+        return $data ? $this->apiClient($data, 'api/events/navigation') : null;
+    }
+    
+    public function getCartData($cart)
+    {
+    	$user_id	= $_SESSION['auth']['user_id'];
+    	$customer	= $this->getCustomer($user_id);
+    	
+        $data = array(
+            'customer'    => $customer,
+            'order_id'    => null,
+            'price_total' => 0,
+            'qty_total'   => isset($cart['products']) && $cart['products'] ? count($cart['products']) : 0,
+            'products'    => array()
+        );
+        
+        // $this->localResponseLog($cart['products']);
+        
+        if(isset($cart['products']) && count($cart['products']) > 0)
+        {
+	        foreach ($cart['products'] as $item)
+	        {
+	        	$price_total = intval($item['amount'] * $item['price']);
+	        	
+		        $product = array (
+		            "product_id"            => $item['product_id'],
+		            "product_name"          => $item['product'],
+		            "product_desc"          => isset($item['full_description']) ? $item['full_description'] : "",
+		            "product_sku"           => $item['product_code'],
+		            "product_image"         => $item['main_pair']['detailed']['image_path'],
+		            "product_url"           => (isset($_SERVER['HTTPS']) ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+		            "product_qty"           => intval($item['amount']),
+		            "product_price"         => $price_total,
+		            "product_total_val"     => intval($item['amount']),
+		            "product_categories"    => array()
+		        );
+	        
+	        	$data['products'][] = $product;
+	        	$data['price_total'] += $price_total;
+        	}
+        }
+    	
+    	return $data;
+    }
+    
+    public function getOrderData($order_id, $order_status, $cart)
+    {
+    	$user_id	= $_SESSION['auth']['user_id'];
+    	$customer	= $this->getCustomer($user_id);
+    	
+        $data = array(
+            'customer'    => $customer,
+            'order_id'    => intval($order_id),
+            'status'	  => $order_status,
+            'price_total' => 0,
+            'qty_total'   => count($cart['products']),
+            'products'    => array()
+        );
+        
+        if(count($cart['products']) > 0)
+        {
+	        foreach ($cart['products'] as $item)
+	        {
+	        	$price_total = intval($item['amount'] * $item['price']);
+	        	
+		        $product = array (
+		            "product_id"            => $item['product_id'],
+		            "product_name"          => $item['product'],
+		            "product_desc"          => isset($item['full_description']) ? $item['full_description'] : "",
+		            "product_sku"           => $item['product_code'],
+		            "product_image"         => $item['main_pair']['detailed']['image_path'],
+		            "product_url"           => (isset($_SERVER['HTTPS']) ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'],
+		            "product_qty"           => intval($item['amount']),
+		            "product_price"         => intval($item['amount'] * $item['base_price']),
+		            "product_total_val"     => intval($item['amount']),
+		            "product_categories"    => array()
+		        );
+	        	
+	        	
+	        	$data['products'][] = $product;
+	        	$data['price_total'] += $price_total;
+        	}
+        }
+    	
+    	return $data;
+    }
+    
+    public function onConvertCartToOrder($data)
+    {
+        return $this->apiClient($data, 'api/events/order');
+    }
+    
+    public function sendCart($data)
+    {
+        return $this->apiClient($data, 'api/events/cart');
     }
     
     public function getCustomerLoginData($user_id)
